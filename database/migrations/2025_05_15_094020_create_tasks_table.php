@@ -20,7 +20,6 @@ return new class extends Migration
             $table->text('description')->nullable()->comment('Description of the task');
             $table->date('due_date')->nullable()->comment('Due date for the task');
             $table->string('priority')->default(PriorityEnum::NORMAL)->comment('Priority of the task');
-            $table->enum('is_active', ['y', 'n'])->default('y')->comment('Indicates if the task is currently active');
             $table->string('status')->default(TaskStatusEnum::PENDING)->comment('Status of the task');
             $table->string('url')->nullable()->comment('URL to the task or related resource');
             $table->string('image')->nullable()->comment('URL or path to the task image');

@@ -23,6 +23,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $projects = auth()->user()->projects();
+        $projectCount = $projects->count();
+        $activeProjectsCount = $projects->active()->count();
+        $inactiveProjectsCount = $projects->inactive()->count();
+        return view('home', compact('projectCount', 'activeProjectsCount', 'inactiveProjectsCount'));
     }
 }

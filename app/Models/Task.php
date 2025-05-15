@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\PriorityEnum;
 use App\Enums\TaskStatusEnum;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Task extends Model
 {
@@ -60,5 +61,11 @@ class Task extends Model
     public function project()
     {
         return $this->belongsTo(Project::class);
+    }
+
+    // Mutator for the image attribute
+    public function getImageAttribute($value)
+    {
+        return $value ? Storage::url($value) : null;
     }
 }

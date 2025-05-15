@@ -52,4 +52,25 @@ class Project extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the tasks for the project.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', 'y');
+    }
+
+    public function scopeInactive($query)
+    {
+        return $query->where('is_active', 'n');
+    }
 }
