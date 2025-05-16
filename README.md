@@ -1,6 +1,18 @@
 # Rails Carma Interview Task
 
-## Installation
+## SetUp Instructions
+This project is a Laravel application that requires PHP 8.2 or higher and Composer to manage dependencies. It also uses Node.js for front-end assets.
+The project is designed to be run on a local development server, and it uses MySQL as the database.
+
+## Prerequisites
+- PHP 8.2 or higher
+- Composer 1.0 or higher
+- Node.js LTS 18 or higher
+- MySQL
+- Laravel 12
+- Laravel Herd (optional, but recommended for local development)
+
+## Installation Steps
 
 Follow below steps to install and run this project.
 
@@ -61,3 +73,37 @@ php artisan serve
 ```
 
 You're good to go.
+
+## Framework & Libraries Used
+
+- **Laravel**: 12.0.
+- **PHP**: 8.2 or higher.
+- **MySQL**: 8.0 or higher.
+- **Node.js**: 18.0 or higher.
+- **Composer**: 1.0 or higher.
+- **Bootstrap**: 5.2.3: A CSS framework used for styling the application.
+- **jQuery**: 3.7.1: A JavaScript library used for DOM manipulation and AJAX requests.
+- **MaxMind GeoIP2**: A library used for IP geolocation. (Version 2.0.4)
+
+## Implementation Approach
+
+### Models
+- **User**: Represents the users of the application. It has a one-to-many relationship with the `Project` model.
+- **Project**: Represents the projects created by users. It belongs to a single user and can have many tasks.
+- **Task**: Represents the tasks within a project. It belongs to a single project and a single user.
+  
+### Controllers
+- **ProjectController**: Handles CRUD operations for projects.
+- **TaskController**: Handles CRUD operations for tasks within a project.
+- **LoginController**: Handles user authentication and token generation.
+- **RegisterController**: Handles user registration and authentication.
+- **HomeController**: Handles requests to the Dashboard page.
+
+### Routes
+- **web.php**: Contains routes for the web application, including authentication, project management, and task management.
+
+### Requests
+- **AddProjectRequest**: Validates project creation requests.
+- **AddTaskRequest**: Validates task creation requests.
+- **EditTaskRequest**: Validates task update requests.
+- **EditProjectRequest**: Validates project update requests.
