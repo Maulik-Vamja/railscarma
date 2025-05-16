@@ -64,13 +64,9 @@ class Project extends Model
     }
 
 
-    public function scopeActive($query)
+    public function scopeOf($query,$status)
     {
-        return $query->where('is_active', 'y');
+        return $query->where('status', $status);
     }
-
-    public function scopeInactive($query)
-    {
-        return $query->where('is_active', 'n');
-    }
+    
 }

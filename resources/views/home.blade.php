@@ -14,27 +14,35 @@
         @endif
 
         <div class="row py-2">
-            <div class="col-md-4 mb-4">
+            <div class="col-md-3 mb-4">
                 <div class="card bg-white text-dark">
                     <div class="card-body">
-                        <h1 class="card-title text-center">{{ $projectCount ?? 0 }}</h1>
+                        <h1 class="card-title text-center">{{ $allProjectCount ?? 0 }}</h1>
                         <p class="card-text text-center">Total Projects</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
+            <div class="col-md-3 mb-4">
                 <div class="card bg-white text-dark">
                     <div class="card-body">
-                        <h1 class="card-title text-center">{{ $activeProjectsCount ?? 0 }}</h1>
-                        <p class="card-text text-center">Active Projects</p>
+                        <h1 class="card-title text-center">{{ $pendingProjectsCount ?? 0 }}</h1>
+                        <p class="card-text text-center">Pending Projects</p>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
+            <div class="col-md-3 mb-4">
                 <div class="card bg-white text-dark">
                     <div class="card-body">
-                        <h1 class="card-title text-center">{{ $inactiveProjectsCount ?? 0 }}</h1>
-                        <p class="card-text text-center">Inactive Projects</p>
+                        <h1 class="card-title text-center">{{ $inProgressProjectsCount ?? 0 }}</h1>
+                        <p class="card-text text-center">In Progress Projects</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card bg-white text-dark">
+                    <div class="card-body">
+                        <h1 class="card-title text-center">{{ $completedProjectsCount ?? 0 }}</h1>
+                        <p class="card-text text-center">Completed Projects</p>
                     </div>
                 </div>
             </div>
@@ -79,11 +87,13 @@
                             'status',
                             'start_date',
                             'end_date',
+                            'tasks_count',
                             'action'
                         ],
                     },
                 },
-                columns: [{
+                columns: [
+                    {
                         data: 'created_at',
                     },
                     {
@@ -92,7 +102,6 @@
                     {
                         data: 'description'
                     },
-
                     {
                         data: 'priority'
                     },
@@ -104,6 +113,10 @@
                     },
                     {
                         data: 'end_date'
+                    },
+                    {
+                        data: 'tasks_count',
+
                     },
                     {
                         data: 'action',
@@ -121,7 +134,8 @@
                     {
                         targets: 1,
                         title: "Project Name",
-                        orderable: false
+                        orderable: true,
+                        sortable: true,
                     },
                     {
                         targets: 2,
@@ -132,24 +146,28 @@
                     {
                         targets: 3,
                         title: 'Priority',
-                        orderable: false
+                        orderable: true
                     },
                     {
                         targets: 4,
                         title: 'Status',
-                        orderable: false
+                        orderable: true
                     },
                     {
                         targets: 5,
                         title: 'Start Date',
-                        orderable: false
+                        orderable: true
                     },
                     {
                         targets: 6,
                         title: 'End Date',
+                        orderable: true
+                    },
+                    {
+                        targets: 7,
+                        title: 'Tasks Count',
                         orderable: false
                     },
-
                     // Action buttons
                     {
                         targets: -1,
@@ -158,7 +176,7 @@
                     },
                 ],
                 order: [
-                    [1, 'asc']
+                    [0, 'asc']
                 ],
                 lengthMenu: [
                     [10, 20, 50, 100],

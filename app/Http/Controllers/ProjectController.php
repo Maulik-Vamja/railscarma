@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Project\AddProjectRequest;
+use App\Http\Requests\Project\EditProjectRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -17,8 +19,7 @@ class ProjectController extends Controller
         if (request()->wantsJson()) {
             extract($this->DTFilters($request->all()));
             $records = [];
-            $projects = Project::orderBy($sort_column, $sort_order)
-                ->with(['tasks', 'user'])
+            $projects = Project::with(['tasks', 'user'])
                 ->where('user_id', auth()->user()->id)
                 ->when($search != '', function ($query) use ($search) {
                     $query->where(function ($query) use ($search) {
@@ -33,7 +34,7 @@ class ProjectController extends Controller
             $records['recordsFiltered'] = $count;
             $records['data'] = [];
 
-            $projects = $projects->offset($offset)->limit($limit)->get();
+            $projects = $projects->offset($offset)->limit($limit)->orderBy($sort_column, $sort_order)->get();
 
             foreach ($projects as $project) {
 
@@ -45,6 +46,7 @@ class ProjectController extends Controller
                     'status' => $project->status->label(),
                     'start_date' => $project->start_date->format('d/m/Y'),
                     'end_date' => $project->end_date->format('d/m/Y'),
+                    'tasks_count' => '<a class="text-decoration-none" href="' . route('projects.show', $project->id) . '">' . $project->tasks->count() . '</a>',
                     'action' => view('layouts.includes.actions')->with(['custom_title' => 'Projects', 'id' => $project->id, 'routeName' => $this->getCurrentRouteName()], $project)->render(),
                 ];
             }
@@ -102,9 +104,31 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(EditProjectRequest $request, string $id)
     {
-        //
+        try {
+            $project = Project::findOrFail($id);
+            if ($project->user_id != auth()->user()->id) {
+                return redirect()->route('home')->with('error', 'You are not authorized to edit this project.');
+            }
+
+            DB::transaction(function () use ($request, $project) {
+                $project->update($request->validated());
+                if ($request->hasFile('image')) {
+                    // Delete the old image if it exists
+                    if ($project->image) {
+                        Storage::delete($project->image);
+                    }
+                    $project->image = $request->file('image')->store('projects');
+                }
+                $project->save();
+            });
+
+            return to_route('home')->with('success', 'Project updated successfully.');
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            return redirect()->back()->with('error', 'Error updating project: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -112,6 +136,25 @@ class ProjectController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $project = Project::findOrFail($id);
+            if ($project->user_id != auth()->user()->id) {
+                return redirect()->route('home')->with('error', 'You are not authorized to delete this project.');
+            }
+
+            DB::transaction(function () use ($project) {
+                $project->delete();
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Project deleted successfully.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting project: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

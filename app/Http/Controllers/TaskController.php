@@ -99,9 +99,16 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Task $task)
     {
-        //
+        if (request()->wantsJson()) {
+            $task->load(['project', 'user']);
+            return response()->json([
+                'html'  => view('tasks.view')->with(['task' => $task])->render(),
+                'success' => true,
+                'task' => $task
+            ]);
+        }
     }
 
     /**
@@ -133,7 +140,6 @@ class TaskController extends Controller
      */
     public function update(EditTaskRequest $request, Task $task)
     {
-        dd('here');
         try {
             DB::transaction(function () use ($request, $task) {
 
@@ -184,6 +190,37 @@ class TaskController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $task = Task::findOrFail($id);
+
+            // Check if the task belongs to the authenticated user
+            if ($task->user_id !== auth()->user()->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized'
+                ], 403);
+            }
+
+            // Delete the image if it exists
+            if ($task->image) {
+                Storage::delete($task->getRawOriginal('image'));
+            }
+
+            $task->delete();
+
+            return response()->json(['success' => true, 'message' => 'Task deleted successfully'], 200);
+        } catch (\Illuminate\Database\QueryException $e) {
+            logger()->error('Database error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete task due to database error'
+            ], 500);
+        } catch (\Exception $e) {
+            logger()->error('Error deleting task: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while deleting the task'
+            ], 500);
+        }
     }
 }

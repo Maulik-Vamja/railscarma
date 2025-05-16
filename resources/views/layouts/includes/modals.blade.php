@@ -15,7 +15,7 @@
                 @method('PUT')
                 <div class="modal-body">
                     <input type="hidden" id="task_id" name="task_id">
-
+                    <input type="hidden" id="target_url" name="target_url" value="{{ route('tasks.update', ':id') }}">
                     <div class="form-group mb-3">
                         <label for="name">Task Name</label>
                         <input type="text" class="form-control" id="task_name" name="name">
@@ -78,3 +78,25 @@
         </div>
     </div>
 </div>
+{{-- View Task Modal --}}
+
+<div class="modal fade" id="viewTaskModal" tabindex="-1" role="dialog" aria-labelledby="viewTaskModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewTaskModalLabel">View Task</h5>
+                <button type="button" class="close btn-close" data-dismiss="modal" data-bs-dismiss="modal"
+                    aria-label="Close">
+
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                    data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>

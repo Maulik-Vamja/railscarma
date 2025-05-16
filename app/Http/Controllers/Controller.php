@@ -13,8 +13,8 @@ class Controller extends BaseController
 
     public function DTFilters($request)
     {
-        $sort_column = $request['order'][0]['column'] ?? 'id';
-        $sort_order = $request['order'][0]['dir'] ?? 'asc';
+        $sort_column = (isset($request['order'][0]['column']) && isset($request['columns'][$request['order'][0]['column']]['data'])) ? $request['columns'][$request['order'][0]['column']]['data'] : 'created_at';
+        $sort_order = isset($request['order'][0]['dir']) ? $request['order'][0]['dir'] : 'DESC';
         $limit = $request['length'] ?? 10;
         $offset = $request['start'] ?? 0;
         $search = $request['search']['value'] ?? '';

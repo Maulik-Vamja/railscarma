@@ -17,12 +17,12 @@ enum TaskStatusEnum: string
         };
     }
 
-    public function color(): string
+    public function badge(): string
     {
         return match ($this) {
-            self::PENDING => 'bg-yellow-500',
-            self::IN_PROGRESS => 'bg-blue-500',
-            self::COMPLETED => 'bg-green-500',
+            self::PENDING => 'badge badge-warning',
+            self::IN_PROGRESS => 'badge badge-primary',
+            self::COMPLETED => 'badge badge-success',
         };
     }
 }

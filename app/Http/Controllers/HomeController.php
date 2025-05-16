@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ProjectStatusEnum;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,10 +24,13 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $projects = auth()->user()->projects();
-        $projectCount = $projects->count();
-        $activeProjectsCount = $projects->active()->count();
-        $inactiveProjectsCount = $projects->inactive()->count();
-        return view('home', compact('projectCount', 'activeProjectsCount', 'inactiveProjectsCount'));
+        $user = auth()->user();
+
+        $allProjectCount = $user->projects()->count();
+        $pendingProjectsCount = $user->projects()->of(ProjectStatusEnum::PENDING)->count();
+        $inProgressProjectsCount = $user->projects()->of(ProjectStatusEnum::IN_PROGRESS)->count();
+        $completedProjectsCount = $user->projects()->of(ProjectStatusEnum::COMPLETED)->count();
+
+        return view('home', compact('allProjectCount', 'pendingProjectsCount', 'inProgressProjectsCount', 'completedProjectsCount'));
     }
 }

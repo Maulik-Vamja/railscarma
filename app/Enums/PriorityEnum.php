@@ -25,4 +25,12 @@ enum PriorityEnum: string
             self::HIGH => 'bg-red-500',
         };
     }
+    public function badge(): string
+    {
+        return match ($this) {
+            self::LOW => 'badge badge-secondary',
+            self::NORMAL => 'badge badge-warning',
+            self::HIGH => 'badge badge-danger',
+        };
+    }
 }

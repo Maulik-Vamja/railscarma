@@ -15,7 +15,14 @@ $(document).ready(function () {
                 // Populate form fields with task data
                 $("#task_name").val(taskDetails.name);
                 $("#task_description").val(taskDetails.description);
-                $("#task_due_date").val(taskDetails.due_date);
+                // Format the due date to YYYY-MM-DD for HTML date input
+                if (taskDetails.due_date) {
+                    var dueDate = new Date(taskDetails.due_date);
+                    var formattedDate = dueDate.toISOString().split("T")[0];
+                    $("#task_due_date").val(formattedDate);
+                } else {
+                    $("#task_due_date").val("");
+                }
                 // Set the priority dropdown value
                 $("#task_priority").val(taskDetails.priority);
                 // Ensure the correct option is selected
@@ -37,8 +44,8 @@ $(document).ready(function () {
                     $("#task_image_preview").addClass("d-none");
                 }
 
-                // Set the form action to update this specific task
-                $("#edit-task-form").attr("action", "/tasks/" + taskDetails.id);
+                // Set the task_id in the form
+                $("#task_id").val(taskDetails.id);
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching task details:", error);
@@ -117,20 +124,34 @@ $(document).ready(function () {
             return; // If the form is not valid, do not proceed
         }
 
-        var formData = new FormData(this);
-        var actionUrl = $(this).attr("action");
+        var formData = new FormData($(this)[0]);
+
         // Get task_id from the form
         var taskId = $(this).find("[name='task_id']").val();
 
+        var targetUrl = $(this)
+            .find("[name='target_url']")
+            .val()
+            .replace(":id", taskId);
+
+        // Add CSRF token to the header
+        $.ajaxSetup({
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+        });
+
         $.ajax({
-            url: "tasks/update/" + taskId,
-            type: "PUT",
+            url: targetUrl,
+            type: "POST",
             data: formData,
             processData: false,
             contentType: false,
             success: function (response) {
                 // console.log("Task updated successfully:", response);
                 $("#editTaskModal").modal("hide");
+
+                alert("Task updated successfully!");
                 // Optionally, refresh the task list or update the UI
                 location.reload();
             },
@@ -139,5 +160,72 @@ $(document).ready(function () {
                 alert("Failed to update task. Please try again.");
             },
         });
+    });
+});
+// Delete task confirmation using SweetAlert
+$(document).on("click", "#deleteButton", function (e) {
+    e.preventDefault();
+    var targetUrl = $(this).data("target-url");
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+            // Add CSRF token to the header
+            $.ajaxSetup({
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
+                },
+            });
+
+            return $.ajax({
+                url: targetUrl,
+                type: "DELETE",
+                dataType: "json",
+            }).catch((error) => {
+                console.error("Error deleting task:", error);
+                Swal.showValidationMessage(`Request failed: ${error}`);
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire(
+                "Deleted!",
+                "Resource has been deleted successfully.",
+                "success"
+            );
+            // Optionally, refresh the task list or update the UI
+            location.reload();
+        }
+    });
+});
+// View task details
+$(document).on("click", "#viewTaskBtn", function () {
+    var targetUrl = $(this).data("target-url");
+    // Fetch task details from the server
+    $.ajax({
+        url: targetUrl,
+        type: "GET",
+        dataType: "json",
+        success: function (response) {
+            // Populate the modal with task details
+            var taskDetails = response.html;
+            $("#viewTaskModal").modal("show");
+
+            $("#viewTaskModal .modal-body").html(taskDetails);
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching task details:", error);
+            alert("Failed to load task details. Please try again.");
+        },
     });
 });

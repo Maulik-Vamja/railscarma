@@ -63,9 +63,35 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+
+        // $ip = request()->ip();
+        $ip = '150.107.241.173';
+        // Get the city from the IP address using MaxMind GeoIP database
+        $reader = new \GeoIp2\Database\Reader(public_path('GeoLite2-City.mmdb'));
+        try {
+            $record = $reader->city($ip);
+            $city = $record->city->name;
+            $state = $record->mostSpecificSubdivision->name;
+            $country = $record->country->name;
+        } catch (\GeoIp2\Exception\AddressNotFoundException $e) {
+            dd($e->getMessage(), '1');
+            $city = 'Unknown';
+            $state = 'Unknown';
+            $country = 'Unknown';
+        } catch (\Exception $e) {
+            dd($e->getMessage(), '2');
+            $city = 'Unknown';
+            $state = 'Unknown';
+            $country = 'Unknown';
+        }
+
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'city' => $city,
+            'state' => $state,
+            'country' => $country,
+            'ip_address' => $ip,
             'password' => Hash::make($data['password']),
         ]);
     }

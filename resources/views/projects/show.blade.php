@@ -2,20 +2,30 @@
 
 @section('content')
     <div class="container">
-        <div class="">
-            <a href="{{ $project->url ?? 'javascript::void(0)' }}" class="text-decoration-none">
-                <h1>{{ $project->name }}</h1>
-            </a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="">
+                <div class="">
+                    <a href="{{ $project->url ?? 'javascript::void(0)' }}" class="text-decoration-none">
+                        <h1>{{ $project->name }}</h1>
+                    </a>
+                </div>
+                <p><strong>Created At:</strong> {{ $project->created_at->format('Y-m-d H:i:s') }}</p>
 
+                <p>{{ $project->description }}</p>
+                <ul>
+                    <li><strong>Start Date:</strong> {{ $project->start_date->format('Y-m-d') }}</li>
+                    <li><strong>End Date:</strong> {{ $project->end_date->format('Y-m-d') }}</li>
+                    <li><strong>Status:</strong> {{ $project->status->label() }}</li>
+                </ul>
+            </div>
+            <div class="">
+                {{-- Image --}}
+                @if ($project->image)
+                    <img src="{{ asset('storage/' . $project->image) }}" alt="Project Image" class="img-thumbnail"
+                        style="width: auto; height: 200px;">
+                @endif
+            </div>
         </div>
-        <p><strong>Created At:</strong> {{ $project->created_at->format('Y-m-d H:i:s') }}</p>
-
-        <p>{{ $project->description }}</p>
-        <ul>
-            <li><strong>Start Date:</strong> {{ $project->start_date->format('Y-m-d') }}</li>
-            <li><strong>End Date:</strong> {{ $project->end_date->format('Y-m-d') }}</li>
-            <li><strong>Status:</strong> {{ $project->status->label() }}</li>
-        </ul>
         <div class="row">
             <div class="col-md-12">
                 <div class="card mb-4">
@@ -127,6 +137,8 @@
                     }
                 },
                 columns: [{
+                        data: 'created_at',
+                    }, {
                         data: 'name'
                     },
                     {
@@ -146,29 +158,38 @@
                 ],
                 columnDefs: [{
                         targets: 0,
+                        title: "Created At",
+                        visible: false,
+                    },
+                    {
+                        targets: 1,
                         title: "Task Name",
                         orderable: true,
                         render: function(data, type, row) {
                             return `<a href="${row.url}" target="_blank">${data}</a>`;
                         }
                     }, {
-                        targets: 1,
+                        targets: 2,
                         title: "Status",
                         orderable: true,
                     }, {
-                        targets: 2,
+                        targets: 3,
                         title: "Due Date",
                         orderable: true,
 
                     },
                     {
-                        targets: 3,
+                        targets: 4,
                         title: "Priority",
                         orderable: true,
+                    }, {
+                        targets: -1,
+                        title: "Actions",
+                        orderable: false,
                     }
                 ],
                 order: [
-                    [0, 'asc']
+                    [0, 'desc']
                 ],
                 pageLength: 10,
                 lengthMenu: [
