@@ -74,12 +74,10 @@ class RegisterController extends Controller
             $state = $record->mostSpecificSubdivision->name;
             $country = $record->country->name;
         } catch (\GeoIp2\Exception\AddressNotFoundException $e) {
-            dd($e->getMessage(), '1');
             $city = 'Unknown';
             $state = 'Unknown';
             $country = 'Unknown';
         } catch (\Exception $e) {
-            dd($e->getMessage(), '2');
             $city = 'Unknown';
             $state = 'Unknown';
             $country = 'Unknown';

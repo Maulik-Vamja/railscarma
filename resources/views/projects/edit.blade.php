@@ -4,7 +4,7 @@
         <div class="py-2">
             <h3>Update Project</h3>
         </div>
-        @dump($errors->all());
+
         <div class="card bg-white">
             <div class="card-body">
                 <form method="POST" action="{{ route('projects.update', $project->id) }}" enctype="multipart/form-data"

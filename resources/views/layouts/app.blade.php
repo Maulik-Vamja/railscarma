@@ -48,7 +48,7 @@
 
                     <!-- Right Side Of Navbar -->
                     <div class="d-flex align-items-center">
-
+                        @auth
                         <span class="me-3">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                 viewBox="0 0 16 16">
@@ -58,7 +58,7 @@
                             {{ auth()->user()->city }},
                             {{ auth()->user()->state }},{{ strtoupper(auth()->user()->country) }}
                         </span>
-
+                        @endauth
                         <ul class="navbar-nav ms-auto">
                             <!-- Authentication Links -->
                             @guest

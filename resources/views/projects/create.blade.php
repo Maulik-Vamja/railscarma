@@ -4,7 +4,6 @@
         <div class="py-2">
             <h3>Create Project</h3>
         </div>
-        @dump($errors->all());
         <div class="card bg-white">
             <div class="card-body">
                 <form method="POST" action="{{ route('projects.store') }}" enctype="multipart/form-data" id="project-form">

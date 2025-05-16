@@ -126,7 +126,6 @@ class ProjectController extends Controller
 
             return to_route('home')->with('success', 'Project updated successfully.');
         } catch (\Exception $e) {
-            dd($e->getMessage());
             return redirect()->back()->with('error', 'Error updating project: ' . $e->getMessage());
         }
     }
