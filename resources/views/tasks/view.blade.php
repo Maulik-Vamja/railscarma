@@ -5,7 +5,7 @@
         <label class="fw-bold">Task Name:</label>
         {{-- Task title with link --}}
         <a href="{{ $task->url ?? 'javascript:void(0)' }}" class="text-decoration-none">
-            <h5 class="fw-bold">{{ $task->title ?? 'Task Title' }}</h5>
+            <h5 class="fw-bold">{{ $task->name ?? 'Task Title' }}</h5>
         </a>
     </div>
     <div class="col-6">
