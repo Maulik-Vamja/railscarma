@@ -19,7 +19,6 @@ class Project extends Model
         'name',
         'description',
         'user_id',
-        'is_active',
         'priority',
         'status',
         'url',

@@ -24,7 +24,6 @@ return new class extends Migration
             $table->date('end_date')->nullable()->comment('Date when the project ended');
             $table->string('image')->nullable()->comment('URL or path to the project image');
             $table->string('priority')->default(PriorityEnum::NORMAL)->comment('Priority of the project');
-            $table->enum('is_active', ['y', 'n'])->default('y')->comment('Indicates if the project is currently active');
             $table->timestamps();
         });
     }
